@@ -30,7 +30,7 @@ class Deck:
 
     def __init__(self) -> None:
         self.make_black_jack_deck()
-    
+
     def __len__(self):
         return len(self.deck)
 
@@ -45,46 +45,46 @@ class Deck:
                 card = Card(i, j, value)
                 self.deck.append(card)
         return self.deck
-    
+
     def shuffle_deck(self):
         shuffle(self.deck)
         return self.deck
-    
+
     def pop_card(self):
         card = self.deck.pop()
         return card
 
 
 class Player:
-    def __init__(self, name: str = 'Croupier') -> None:
+    def __init__(self, name: str = 'Croupier', coins=100) -> None:
         self.name = name
+        self.coins = coins
         self.cards = []
-    
+
     def take_card(self, deck: Deck):
         card = deck.pop_card()
         self.cards.append(card)
         return card
-    
+
     def pass_game():
         pass
 
+    def bet(self, coins):
+        self.coins -= coins
+        return self.coins
 
-deck_1 = Deck()
-print(deck_1.deck)
-print('oko'*50)
-
-oko = deck_1.shuffle_deck()
-
-print(oko == deck_1.deck)
-
-
-print('_'*50)
-
-print(deck_1.deck)
+    def collect_coins(self, coins):
+        self.coins += coins
+        return self.coins
 
 
+class Game:
 
-print(len(deck_1))
+    def run():
+        name = input('Podaj imię: ')
+        player = Player(name)
+        croupier = Player()
 
-
-
+        while True:
+            deck = Deck()
+            deck.shuffle_deck()
