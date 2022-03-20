@@ -1,30 +1,35 @@
+
 from random import shuffle
 
 
+class OptionError(Exception):
+    pass
+
+
 class Card:
-    def __init__(self, color: str, figure: str, value: int):
-        self._color = color
-        self._figure = figure
-        self._value = value
+    def __init__(self, figure: str, color: str, value: int):
+        self.figure = figure
+        self.color = color
+        self.value = value
 
     def __str__(self) -> str:
-        return f'Card {self._figure[0]} {self._color}'
+        return f'Card {self.figure} {self.color}'
 
     def __repr__(self) -> str:
-        return f'<Card( {self._color}, {self._figure}, {self._value})>'
+        return f'<Card({self.figure}, {self.color}, {self.value})>'
 
     def __eq__(self, other: object) -> bool:
-        return self._value == other._value
+        return self.value == other.value
 
     def __gt__(self, other: object) -> bool:
-        return self._value > other._value
+        return self.value > other.value
 
     def __lt__(self, other: object) -> bool:
-        return self._value < other._value
+        return self.value < other.value
 
 
 class Deck:
-    BLOTS = range(1, 11)
+    BLOTS = range(2, 11)
     FIGURES = ('KING', 'QUEEN', 'JACK', 'ACE')
     COLOR = ('♥', '♦', '♠', '♣')
 
@@ -35,7 +40,7 @@ class Deck:
         return len(self.deck)
 
     def make_black_jack_deck(self):
-        self.deck = [Card(j, str(i), i) for i in Deck.BLOTS[1:] for j in
+        self.deck = [Card(str(i), j, i) for i in Deck.BLOTS for j in
                      Deck.COLOR]
         for i in Deck.FIGURES:
             for j in Deck.COLOR:
@@ -61,13 +66,13 @@ class Player:
         self.coins = coins
         self.cards = []
 
-    def take_card(self, deck: Deck):
-        card = deck.pop_card()
+    def collect_card(self, card: Card):
         self.cards.append(card)
         return card
 
-    def pass_game():
-        pass
+    def cards_value(self):
+        value = sum([card.value for card in self.cards])
+        return value
 
     def bet(self, coins):
         self.coins -= coins
@@ -79,12 +84,63 @@ class Player:
 
 
 class Game:
+    def __init__(self):
+        self.deck = Deck()
+        self.deck.shuffle_deck()
+        self.croupier = Player()
+        self.get_player()
 
-    def run():
+    def get_player(self):
         name = input('Podaj imię: ')
-        player = Player(name)
-        croupier = Player()
+        self.player = Player(name)
 
+    def first_hand(self):
+        for _ in range(1, 3):
+            print(_)
+            card = self.deck.pop_card()
+            self.player.collect_card(card)
+        for _ in range(1, 3):
+            print(_)
+            card = self.deck.pop_card()
+            self.croupier.collect_card(card)
+
+    def check_player_cards(self):
+        value = self.player.cards_value()
+        if value == 22:
+            return True
+        return value
+
+    def options(self):
+        options = {
+            '1': 'Take card',
+            '2': 'Pass',
+            '0': 'Exit game',
+        }
+        for i, j in options.items():
+            print(i, j)
+
+    def run(self):
+        self.first_hand()
+        print()
+        print(f'{self.player.name} cards: {self.player.cards}')
+        print('-'*50)
+        print(f'Croupier cards {[self.croupier.cards[0]]}')
+        print()
+        self.options()
         while True:
-            deck = Deck()
-            deck.shuffle_deck()
+            taken = input('Choose option: ')
+            try:
+                if taken == '0':
+                    exit()
+                elif taken == '1':
+                    card = self.deck.pop_card()
+                    self.player.collect_card(card)
+                raise OptionError
+            except OptionError as e:
+                e = 'Not right option!'
+                print(e)
+
+
+if __name__ == '__main__':
+    game = Game()
+    game.run()
