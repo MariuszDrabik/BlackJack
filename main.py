@@ -1,7 +1,13 @@
 import os
 from cards import Deck
-from exceptions import BlackJackWin, CroupierLoose, CroupierWin, \
-    DrawException, LooseError, PassException
+from exceptions import (
+    BlackJackWin,
+    CroupierLoose,
+    CroupierWin,
+    DrawException,
+    LooseError,
+    PassException
+    )
 from player import Player
 
 
