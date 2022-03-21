@@ -88,6 +88,9 @@ class Game:
     def croupier_playing(self, player_points):
         card_value = sum([card.value for card in self.croupier.cards])
 
+        if card_value == 21:
+            raise BlackJackWin('Croupier HAVE BLACK JACK, You loose')
+
         if card_value > player_points:
             raise CroupierWin('Croupier Win')
 
@@ -97,13 +100,21 @@ class Game:
             card_value += card.value
 
         if card_value > 21:
-            raise CroupierLoose('Crupier Loose')
+            raise CroupierLoose('Croupier Loose')
+
+        if card_value > 21 and player_points == 21:
+            raise BlackJackWin('Croupier Loose YOU HAVE BLACK JACK')
+
+
 
         if card_value == player_points:
             raise DrawException('It\'s daw')
 
         if card_value > player_points:
             raise CroupierWin('Croupier Win')
+
+        if card_value < player_points:
+            raise CroupierWin('Croupier Loose')
 
     def game(self):
         try:
@@ -118,6 +129,9 @@ class Game:
                 self.croupier_playing(player_points)
                 c_points = sum([card.value for card in self.croupier.cards])
                 print(player_points, c_points)
+            except BlackJackWin as black_jack:
+                self.show_final_stats()
+                print(black_jack)
             except CroupierLoose as win:
                 # player_collect_coins()
                 self.show_final_stats()
