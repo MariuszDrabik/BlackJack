@@ -11,6 +11,13 @@ class Player:
     def collect_card(self, card: Card):
         self.cards.append(card)
         return card
+    
+    def show_stat(self):
+        """Player cards value"""
+        print('-'*50)
+        print(f'{self.name} cards: {self.cards}')
+        print(f'Points: {sum(card.value for card in self.cards)}')
+        print('-'*50)
 
     def check_cards_value(self):
         value = sum([card.value for card in self.cards])

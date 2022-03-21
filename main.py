@@ -6,6 +6,8 @@ from player import Player
 
 
 class Game:
+    """Main game class to manage everything
+    """
     def __init__(self):
         self.deck = Deck()
         self.deck.shuffle_deck()
@@ -13,14 +15,16 @@ class Game:
         self.games_counter = 0
 
     def take_player_name(self):
+        """Collect player name ;-)"""
         name = input('Podaj imię: ')
         self.player = Player(name)
 
     def first_hand(self):
+        """First hand after round start"""
         self.deck = Deck()
         self.deck.shuffle_deck()
-        self.player.cards = []
         self.croupier.cards = []
+        self.player.cards = []
         os.system('cls||clear')
         for _ in range(1, 3):
             player_card = self.deck.pop_card()
@@ -29,6 +33,7 @@ class Game:
             self.croupier.collect_card(croupier_card)
 
     def game_option(self):
+        """Main menu"""
         if self.games_counter == 0:
             self.games_counter += 1
             print('-'*50)
@@ -43,51 +48,38 @@ class Game:
             print('Exit game: 0')
 
     def play_options(self):
-        options = {'1': 'Take card', '2': 'Pass', '0': 'Exit game'}
+        """Current deal menu"""
+        options = {'1': 'Take card', '2': 'Pass'}
         for i, j in options.items():
             print(i, j)
 
-    def player_stat(self):
-        print()
-        print(f'{self.player.name} cards: {self.player.cards}')
-        print(f'Points: {sum(card.value for card in self.player.cards)}')
-        print('-'*50)
-
-    def croupier_stat(self):
+    def actual_deal_stats(self):
+        self.player.show_stat()
         print(f'Croupier cards {[self.croupier.cards[0]]}')
 
-    def current_play_status(self):
-        print()
-        self.player_stat()
-        self.croupier_stat()
-        print()
-
-    def play_final_stats(self):
+    def show_final_stats(self):
         print()
         print('Final hand stats:')
-        self.player_stat()
-        print(f'Croupier cards {self.croupier.cards}')
-        print(f'Points: {sum(card.value for card in self.croupier.cards)}')
+        self.player.show_stat()
+        self.croupier.show_stat()
         print()
 
     def player_playing(self):
         self.first_hand()
-        self.current_play_status()
+        self.actual_deal_stats()
         while True:
             self.play_options()
             taken = input('Choose option?: ')
-            if taken == '0':
-                exit()
-            elif taken == '1':
+            if taken == '1':
                 self.player.collect_card(self.deck.pop_card())
-                self.current_play_status()
+                self.actual_deal_stats()
                 self.player.check_cards_value()
             elif taken == '2':
                 raise PassException
             else:
                 print('Not right option')
 
-    def croupie_game(self, player_points):
+    def croupier_playing(self, player_points):
         card_value = sum([card.value for card in self.croupier.cards])
 
         if card_value > player_points:
@@ -97,31 +89,39 @@ class Game:
             card = self.deck.pop_card()
             self.croupier.collect_card(card)
             card_value += card.value
+
         if card_value > 21:
             raise CroupierLoose('Crupier Loose')
+
         if card_value == player_points:
             raise DrawException('It\'s daw')
+
+        if card_value > player_points:
+            raise CroupierWin('Croupier Win')
 
     def game(self):
         try:
             self.player_playing()
-        except (LooseError, BlackJackWin) as error:
-            self.play_final_stats()
+        except LooseError as error:
+            self.show_final_stats()
             print(error)
         except PassException:
             try:
+                print('PASS')
                 player_points = sum([card.value for card in self.player.cards])
-                self.croupie_game(player_points)
+                self.croupier_playing(player_points)
+                c_points = sum([card.value for card in self.croupier.cards])
+                print(player_points, c_points)
             except CroupierLoose as win:
                 # player_collect_coins()
-                self.play_final_stats()
+                self.show_final_stats()
                 print(win, 'You win!')
             except CroupierWin as loose:
                 # croupier_collect_coins()
-                self.play_final_stats()
+                self.show_final_stats()
                 print(loose, 'You loose!')
             except DrawException as draw:
-                self.play_final_stats()
+                self.show_final_stats()
                 print(draw, 'No one loose!')
 
     def run(self):
