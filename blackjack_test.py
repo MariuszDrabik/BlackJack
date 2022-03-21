@@ -1,5 +1,5 @@
-from cards import Card, Deck
-from player import Player
+from modules.cards import Card, Deck
+from modules.player import Player
 
 COLOR = ('♥', '♦', '♠', '♣')
 

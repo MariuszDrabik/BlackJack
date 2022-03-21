@@ -1,6 +1,6 @@
 import os
-from cards import Deck
-from exceptions import (
+from modules.cards import Deck
+from modules.exceptions import (
     BlackJackWin,
     CroupierLoose,
     CroupierWin,
@@ -8,7 +8,7 @@ from exceptions import (
     LooseError,
     PassException
     )
-from player import Player
+from modules.player import Player
 
 
 class Game:
@@ -104,7 +104,7 @@ class Game:
         """
         card_value = sum([card.value for card in self.croupier.cards])
 
-        if card <= 21 and card_value > player_points:
+        if card_value <= 21 and card_value > player_points:
             if card_value == 21:
                 raise BlackJackWin('Croupier HAVE BLACK JACK, You loose')
             raise CroupierWin('Croupier Win')
