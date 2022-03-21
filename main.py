@@ -71,6 +71,11 @@ class Game:
         print()
 
     def player_playing(self):
+        """Player decided to play and collect card or pass
+
+        Raises:
+            PassException: if player pass then croupier start play
+        """
         self.first_hand()
         self.actual_deal_stats()
         while True:
@@ -86,12 +91,22 @@ class Game:
                 print('Not right option')
 
     def croupier_playing(self, player_points):
+        """_summary_
+
+        Args:
+            player_points (int): take points form player to comapare
+
+        Raises:
+            CroupierWin: Croupier win
+            DrawException: It's draw
+            BlackJackWin: Someone have blackjach
+            CroupierLoose: Croupier loose
+        """
         card_value = sum([card.value for card in self.croupier.cards])
 
-        if card_value == 21:
-            raise BlackJackWin('Croupier HAVE BLACK JACK, You loose')
-
-        if card_value > player_points:
+        if card <= 21 and card_value > player_points:
+            if card_value == 21:
+                raise BlackJackWin('Croupier HAVE BLACK JACK, You loose')
             raise CroupierWin('Croupier Win')
 
         while card_value <= 16:
@@ -99,22 +114,22 @@ class Game:
             self.croupier.collect_card(card)
             card_value += card.value
 
-        if card_value > 21:
-            raise CroupierLoose('Croupier Loose')
-
-        if card_value > 21 and player_points == 21:
-            raise BlackJackWin('Croupier Loose YOU HAVE BLACK JACK')
-
-
-
         if card_value == player_points:
             raise DrawException('It\'s daw')
+
+        if card_value > 21:
+            if player_points == 21:
+                raise BlackJackWin('Croupier Loose YOU HAVE BLACK JACK')
+            raise CroupierLoose('Croupier Loose')
+
+        if card_value == 21:
+            raise BlackJackWin('Croupier HAVE BLACK JACK, You loose')
 
         if card_value > player_points:
             raise CroupierWin('Croupier Win')
 
         if card_value < player_points:
-            raise CroupierWin('Croupier Loose')
+            raise CroupierLoose('Croupier Loose')
 
     def game(self):
         try:
