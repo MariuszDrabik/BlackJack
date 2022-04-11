@@ -62,6 +62,7 @@ class Game:
     def actual_deal_stats(self):
         self.player.show_stat()
         print(f'Croupier cards {[self.croupier.cards[0]]}')
+        print('-'*50)
 
     def show_final_stats(self):
         print()
